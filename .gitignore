@@ -1,4 +1,5 @@
 data/
+!/data/h08*.dat
 Debug/
 Release/
 *.dat
