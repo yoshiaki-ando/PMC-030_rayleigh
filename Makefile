@@ -2,7 +2,8 @@ OBJS = Across_pts.o Geocoordinate.o Mie_scattering.o Msis.o across_point_atmosph
 	associated_legendre.o beta.o calculate_intensity.o fitting_rayleigh.o \
 	geometry.o get_observation_data.o get_rayleigh.o hcoord2geo.o interpolated_m.o \
 	limb_point.o main.o optical_depth.o output_pmc.o pmc.o rayleigh_part.o \
-	read_pmc_param.o search_pmc_region.o set_fitting_latlon.o solar_direction.o
+	read_pmc_param.o search_pmc_region.o set_fitting_latlon.o solar_direction.o \
+	search_latlon.o
 
 HEADERS = Across_pts.h Date.h Geocoordinate.h Geoparameter.h Mathparameter.h Mie_scattering.h Msis.h Region.h interpolated_m.h pmc.h pmc_simulation.h
 
@@ -27,6 +28,3 @@ main: $(OBJS)
 
 clean:
 	rm -rf *.o main
-
-
-
