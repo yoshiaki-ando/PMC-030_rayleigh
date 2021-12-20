@@ -257,7 +257,7 @@ inline double phi(double theta){
 
 double search_latlon(
     double lat,
-    int angle
+    int side
     );
 
 #endif /* PMC_SIMULATION_H_ */

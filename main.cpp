@@ -22,8 +22,8 @@
 #include "pmc_simulation.h"
 
 /* 設定するパラメタ */
-int Day_of_Year { 190 };
-int Minute_of_Day { 21 * 60 }; /* UT */
+//int Day_of_Year { 190 };
+//int Minute_of_Day { 21 * 60 }; /* UT */
 
 /* 設定するパラメタ(ここまで) */
 
@@ -33,10 +33,14 @@ int main(int argc, char **argv){
 
 
   double lat=0,lon=0;
-  int angle=0;
+  int side=0;
   std::string str_lat(argv[1]);//./main 70の70がargv[1]なのでstr_latに代入
-  std::string str_ang(argv[2]);
-  angle = std::stoi(str_ang);
+  std::string str_side(argv[2]);/*1がアメリカ側、-1がヨーロッパ側*/
+  std::string str_doy(argv[3]);
+  std::string str_time(argv[4]);
+  int Day_of_Year { std::stoi(str_doy) };
+  int Minute_of_Day { std::stoi(str_time) * 60 }; /* UT */
+  side = std::stoi(str_side);
   //str_latをdoubleに変換
   lat = std::stod(str_lat);
 
@@ -46,7 +50,6 @@ int main(int argc, char **argv){
    ************************************************************/
 
   /* 調査する日の設定 */
-  std::cout << "argc=" << argc << std::endl;
   std::string str_hour;
   /*
   if ( argc > 1 ){
@@ -61,7 +64,7 @@ int main(int argc, char **argv){
   constexpr int NUM_ALPHA { 1 };
   double** fitted_latlon = AndoLab::allocate_memory2d(2, NUM_ALPHA, 0.0);
 
-  lon = search_latlon(lat,angle);
+  lon = search_latlon(lat,side);
   std::cout << "lat=" << lat << "lon=" << lon << std::endl;
 
 
@@ -117,12 +120,7 @@ int main(int argc, char **argv){
       N_alt, Altitude_min, dAlt, Rayleigh, Observed_data, idx_fitting_data,
       DL, C, lat);
 
-  std::cout << "C=" << C[0][0] << std::endl;
-  std::cout << "rayleigh=" << Rayleigh[0][0][0] << std::endl;
-  std::cout << "measured=" << Rayleigh[0][0][0]*C[0][0]+DL[0][0] << std::endl;
-  //std::cout << "str=" << std::to_string(int(str_lat)) << std::endl;
-
-  std::ofstream ofs( ("data/C"+str_ang+".dat").c_str() , std::ios::app);
+  std::ofstream ofs( ("data/C"+str_side+".dat").c_str() , std::ios::app);
   ofs << C[0][0] << " " << lat << " " << DL[0][0] << " " << Rayleigh[0][0][0]*C[0][0]+DL[0][0] << "\n";
   ofs.close();
 

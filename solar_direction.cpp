@@ -5,6 +5,9 @@
 #include "Date.h"
 #include "pmc.h"
 #include "Geoparameter.h"
+#include <iostream>
+#include <fstream>
+#include <string>
 
 AndoLab::Vector3d <double> r_s(Date d){ /* Date d はUTで与えられる */
   constexpr double inclination_of_axis = 23.43; /* [deg] 公転の面からの地軸の傾き */
@@ -42,6 +45,33 @@ AndoLab::Vector3d <double> r_s(Date d){ /* Date d はUTで与えられる */
   const double th = std::atan2(
       std::sqrt( 1 - cos_s_sin_g * cos_s_sin_g ), cos_s_sin_g
       );
+
+  double lat = 60;/*すべての緯度経度で同じベクトルとなる*/
+  double lon = 180;
+  double Ts = d.minute_day()/60.0 + 9.0;/*時刻[h]（中央標準時）*/
+  double J = d.doy() + 0.5;/*day of year + 0.5*/
+  double w = 2.0 * M_PI / 365.0;
+  double delta = (0.33281 - 22.984*cos(w*J) - 0.34990*cos(2*w*J) - 0.13980*cos(3*w*J)
+  + 3.7872*sin(w*J) + 0.03250*sin(2*w*J) + 0.07187*sin(3*w*J)) * deg2rad; /* 太陽赤緯[rad] */
+
+  double e = 0.0072*cos(w*J) - 0.0528*cos(2*w*J) - 0.0012*cos(3*w*J)
+  - 0.1229*sin(w*J) - 0.1565*sin(2*w*J) - 0.0041*sin(3*w*J); /* 均時差[h] */
+  double t = (15.0*(Ts + (lon - 135.0)/15.0 + e) - 180.0) *deg2rad; /* 時角[rad] */
+  double h = asin(sin(lat*deg2rad)*sin(delta) + cos(lat*deg2rad)*cos(delta)*cos(t)); /* 太陽高度角[rad] */
+  //double th_h = M_PI/2.0 - h;//太陽天頂角[rad]
+
+  double sinA = cos(delta) * sin(t) / cos(h);
+  double cosA = (sin(h) * sin(lat*deg2rad) - sin(delta)) / (cos(h)*cos(lat*deg2rad));
+  double A = atan2(sinA,cosA);//方位角、南=0、西=90
+  if(A > 2.0*M_PI){
+    A = A - 2.0*M_PI;
+  }
+  if(A < 0.0){
+    A = A + 2.0*M_PI;
+  }
+
+  /*太陽へ向かう単位ベクトル*/
+  //return (r.rotate(th_h, r.phi_vector())).rotate(A,-1.0*r);
   return AndoLab::Vector3d <double> (1.0, th, phi_s, AndoLab::coordinate::Spherical );
 }
 
