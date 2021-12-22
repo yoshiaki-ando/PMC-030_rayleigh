@@ -1,5 +1,5 @@
 /*
- * PMC
+ * PMC(Sakuratani)
  *
  *
  */
@@ -47,6 +47,7 @@ int main(int argc, char **argv){
 
   constexpr int NUM_ALPHA { 1 };
   double** fitted_latlon = AndoLab::allocate_memory2d(2, NUM_ALPHA, 0.0);
+
 //  fitted_latlon[IDX_LATITUDE][0] = 70.0;
 //  fitted_latlon[IDX_LONGITUDE][0] = 204.3;
   if ( argc < 2 ){
@@ -102,9 +103,11 @@ int main(int argc, char **argv){
   /* フィッティング(観測値を見てから) */
   double **DL = AndoLab::allocate_memory2d(Num_Lambda, NUM_ALPHA, 0.0);
   double **C = AndoLab::allocate_memory2d(Num_Lambda, NUM_ALPHA, 0.0);
+  std::cout << "a" << std::endl;
   fitting_rayleigh(NUM_ALPHA, alpha,
       N_alt, Altitude_min, dAlt, Rayleigh, Observed_data, idx_fitting_data,
       DL, C);
+
   std::ofstream ofs_c("C.dat", std::ios::app);
   ofs_c << fitted_latlon[IDX_LATITUDE][0] << " "
       << fitted_latlon[IDX_LONGITUDE][0] << " ";
@@ -113,6 +116,22 @@ int main(int argc, char **argv){
   }
   ofs_c << std::endl;
   ofs_c.close();
+
+  for(int Lambda = 0; Lambda < Num_Lambda; Lambda++){
+    for(int na = 0; na < NUM_ALPHA; na++){
+      std::string str_rayleigh_output
+      = "data/b" + std::to_string(Lambda) + "a" + (na<10?"0":"") + std::to_string(na)
+      + std::to_string(int(fitted_latlon[IDX_LATITUDE][na]))+".dat";
+      std::ofstream ofs( str_rayleigh_output.c_str() );
+      for(int alt = 0; alt < N_alt; alt++){
+        double Al = Altitude_min + alt*dAlt;
+        ofs << Al*1e-3 << " " << Observed_data[Lambda][idx_fitting_data[na]][alt] << " "
+            << Rayleigh[Lambda][na][alt]*C[Lambda][na] + DL[Lambda][na] << "\n";
+      }
+      ofs.close();
+    }
+  }
+
 
   delete [] idx_fitting_data;
   AndoLab::deallocate_memory3d(Observed_data);
@@ -124,5 +143,3 @@ int main(int argc, char **argv){
 
   return 0;
 }
-
-

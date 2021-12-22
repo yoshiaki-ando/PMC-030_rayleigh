@@ -27,6 +27,3 @@ main: $(OBJS)
 
 clean:
 	rm -rf *.o main
-
-
-
