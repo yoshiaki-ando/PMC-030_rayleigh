@@ -231,7 +231,8 @@ void fitting_rayleigh(
     double ***Observed_data,
     int *Index_for_fitting_in_observed_data,
     double **Dark_Level,
-    double **Coefficients
+    double **Coefficients,
+    double lat
     );
 
 /* 観測データのうち、フィッティングに使用する緯度経度インデックス配列を設定 */
@@ -253,5 +254,10 @@ inline double lat2theta(double latitude){
 inline double phi(double theta){
   return acos( Radius_of_Earth / Rgeo / sin(theta) );
 }
+
+double search_latlon(
+    double lat,
+    int side
+    );
 
 #endif /* PMC_SIMULATION_H_ */

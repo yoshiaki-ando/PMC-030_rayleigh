@@ -64,9 +64,10 @@ void fitting_rayleigh(
     double ***Observed_data,
     int *idx_fitting_data,
     double **DL,
-    double **C
+    double **C,
+    double lat
     ){
-
+      
   /*
    * ダークレベルDLの決定
    * 90-99kmの単純平均
@@ -130,8 +131,8 @@ void fitting_rayleigh(
       }
 //      std::cout << alpha << std::endl;
       C[Lambda][na] = alpha;
-      
-      std::ofstream ofs( ("data/b"+std::to_string(Lambda)+"a"+(na<10?"0":"")+std::to_string(na)+".dat").c_str() );
+
+      std::ofstream ofs( ("data/b"+std::to_string(Lambda)+"a"+(na<10?"0":"")+std::to_string(na)+std::to_string(int(lat))+".dat").c_str() );
       for(int alt = 0; alt < Number_of_Altitude; alt++){
         double Al = Lowest_Altitude + alt*Step_of_Altitude;
         ofs << Al*1e-3 << " " << Observed_data[Lambda][idx_fitting_data[na]][alt] << " "
