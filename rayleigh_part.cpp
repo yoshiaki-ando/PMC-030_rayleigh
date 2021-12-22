@@ -97,34 +97,35 @@ double intensity_integral(
       const double theta_s = r_p.theta();
       const double phi_s = r_p.phi();
 
-      for(int m = 0; m < M_alpha; m++){
-        const double alpha = (m + 0.5) * Dalpha;
-        const double Smn = R0*R0 * std::sin(alpha) * Dalpha * Dbeta;
-
-        for(int n = 0; n < N_beta; n++){
-          AndoLab::Vector3d <double> rp_R_mn(R0, alpha, (n+0.5)*Dbeta, AndoLab::coordinate::Spherical);
-          AndoLab::Vector3d <double> r_R_mn = ( rp_R_mn.rotate(theta_s, yv) ).rotate(phi_s, zv); /* 反射点 */
-
-          /* 反射点への太陽光入射判定 */
-          if ( r_R_mn%r_s(date) <= 0.0 ){
-            continue;
-          }
-
-          AndoLab::Vector3d <double> r_Rs_mn = r_p - r_R_mn; /* 反射点→散乱点ベクトル */
-          AndoLab::Vector3d <double> r_Ri_mn =
-              upper_atmosphere_to_solar(r_R_mn, date); /* 反射点に入射する光の大気圏入射点 */
-
-          /* 反射点到達光 */
-          double I_r_mn = std::exp( - Optical_depth(lambda, date, r_Ri_mn, r_R_mn, num_pmc, pmc) );
-          double Ip_S_mn = Smn / M_PI / r_Rs_mn.abs() / r_Rs_mn.abs()
-              * I_r_mn * r_R_mn.n()%r_p.n() * r_Rs_mn.n()%r_R_mn.n(); /* 無損失散乱光 */
-          /* 損失散乱光 */
-          double I_S_mn = Ip_S_mn * std::exp( - Optical_depth(lambda, date, r_p, r_R_mn, num_pmc, pmc) );
-          double theta_s_mn = AndoLab::angle_between( r_Rs_mn, r_gs  ); /* 反射光散乱角 */
-          reflection += I_S_mn * sigma(theta_s_mn, lambda, msis);
-
-        }
-      }
+//      for(int m = 0; m < M_alpha; m++){
+//        const double alpha = (m + 0.5) * Dalpha;
+//        const double Smn = R0*R0 * std::sin(alpha) * Dalpha * Dbeta;
+//
+//        for(int n = 0; n < N_beta; n++){
+//          AndoLab::Vector3d <double> rp_R_mn(R0, alpha, (n+0.5)*Dbeta, AndoLab::coordinate::Spherical);
+//          AndoLab::Vector3d <double> r_R_mn = ( rp_R_mn.rotate(theta_s, yv) ).rotate(phi_s, zv); /* 反射点 */
+//
+//          /* 反射点への太陽光入射判定 */
+//          if ( r_R_mn%r_s(date) <= 0.0 ){
+//            continue;
+//          }
+//
+//          AndoLab::Vector3d <double> r_Rs_mn = r_p - r_R_mn; /* 反射点→散乱点ベクトル */
+//          AndoLab::Vector3d <double> r_Ri_mn =
+//              upper_atmosphere_to_solar(r_R_mn, date); /* 反射点に入射する光の大気圏入射点 */
+//
+//          /* 反射点到達光 */
+//          double I_r_mn = std::exp( - Optical_depth(lambda, date, r_Ri_mn, r_R_mn, num_pmc, pmc) );
+//          double Ip_S_mn = Smn / M_PI / r_Rs_mn.abs() / r_Rs_mn.abs()
+//              * I_r_mn * r_R_mn.n()%r_p.n() * r_Rs_mn.n()%r_R_mn.n(); /* 無損失散乱光 */
+//          /* 損失散乱光 */
+//          double I_S_mn = Ip_S_mn * std::exp( - Optical_depth(lambda, date, r_p, r_R_mn, num_pmc, pmc) );
+//          double theta_s_mn = AndoLab::angle_between( r_Rs_mn, r_gs  ); /* 反射光散乱角 */
+//          reflection += I_S_mn * sigma(theta_s_mn, lambda, msis);
+//          reflection = 0.0;
+//
+//        }
+//      }
 
       /* 反射の検討(ここまで) */
 
