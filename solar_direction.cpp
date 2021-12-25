@@ -43,8 +43,8 @@ AndoLab::Vector3d <double> r_s(Date d){ /* Date d はUTで与えられる */
       std::sqrt( 1 - cos_s_sin_g * cos_s_sin_g ), cos_s_sin_g
       );
 
-  constexpr double lat { 60.0 }; /* すべての緯度経度で同じベクトルとなる */
-  constexpr double lon { 180.0 };
+  constexpr double lat { 0.0 }; /* すべての緯度経度で同じベクトルとなる */
+  constexpr double lon { 140.7 };
   const double Ts { d.minute_day()/60.0 + 9.0 }; /* 時刻[h]（中央標準時）*/
   const double J { d.doy() + 0.5 }; /* day of year + 0.5 */
   constexpr double w { 2.0 * M_PI / 365.0 };
@@ -55,7 +55,7 @@ AndoLab::Vector3d <double> r_s(Date d){ /* Date d はUTで与えられる */
   - 0.1229*sin(w*J) - 0.1565*sin(2*w*J) - 0.0041*sin(3*w*J); /* 均時差[h] */
   const double t = (15.0*(Ts + (lon - 135.0)/15.0 + e) - 180.0) *Deg2rad; /* 時角[rad] */
   const double h = asin(sin(lat*Deg2rad)*sin(delta) + cos(lat*Deg2rad)*cos(delta)*cos(t)); /* 太陽高度角[rad] */
-  //double th_h = M_PI/2.0 - h;//太陽天頂角[rad]
+  double th_h = M_PI/2.0 - h;//太陽天頂角[rad]
 
   const double sinA = cos(delta) * sin(t) / cos(h);
   const double cosA = (sin(h) * sin(lat*Deg2rad) - sin(delta)) / (cos(h)*cos(lat*Deg2rad));
@@ -67,9 +67,12 @@ AndoLab::Vector3d <double> r_s(Date d){ /* Date d はUTで与えられる */
     A = A + 2.0*M_PI;
   }
 
+  AndoLab::Vector3d <double> r;
+  r = AndoLab::Vector3d <double> (1.0, M_PI/2.0, 0.0, AndoLab::coordinate::Spherical );
+
   /*太陽へ向かう単位ベクトル*/
-  //return (r.rotate(th_h, r.phi_vector())).rotate(A,-1.0*r);
-  return AndoLab::Vector3d <double> (1.0, th, phi_s, AndoLab::coordinate::Spherical );
+  return (r.rotate(th_h, r.phi_vector())).rotate(A,-1.0*r);
+  //return AndoLab::Vector3d <double> (1.0, th, phi_s, AndoLab::coordinate::Spherical );
 }
 
 /*
